@@ -1,0 +1,26 @@
+- hosts: all
+  sudo: yes
+  roles:
+     - role: dj-wasabi.zabbix-agent
+       zabbix_agent_server: 18.184.239.183
+       zabbix_agent_serveractive: 18.184.239.183
+       zabbix_url: http://zabbix.example.com
+       zabbix_api_use: true # use zabbix_api_create_hosts and/or zabbix_api_create_hostgroup from 0.8.0
+       zabbix_api_user: Admin
+       zabbix_api_pass: zabbix
+       zabbix_create_host: present
+       zabbix_host_groups:
+         - Linux Servers
+       zabbix_link_templates:
+         - Template OS Linux
+         - Apache APP Template
+#       zabbix_macros:
+#         - macro_key: apache_type
+#           macro_value: reverse_proxy
+  tasks:
+
+  - name: copy conf file
+    copy: src=/etc/zabbix/zabbix_agentd.conf dest=/etc/zabbix/zabbix_agentd.conf seuser=system_u 
+
+  - name: start
+    service: name=zabbix-agent state=started enabled=yes
